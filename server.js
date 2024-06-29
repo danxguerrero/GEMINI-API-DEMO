@@ -7,12 +7,46 @@ const API_KEY = process.env.API_KEY
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
 async function run() {
-  // The Gemini 1.5 models are versatile and work with both text-only and multimodal prompts
+  // The Gemini 1.5 models are versatile and work with multi-turn conversations (like chat)
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
 
-  const prompt = "Create a five day workout plan for me focused on burning fat."
+  const chat = model.startChat({
+    history: [
+      {
+        role: "user",
+        parts: [{ text: "Hello, my goal is to be a bodybuilder." }],
+      },
+      {
+        role: "model",
+        parts: [{ text: "Great to meet you. What would you like to know?" }],
+      },
+      {
+        role: "user",
+        parts: [{ text: "I want to create a workout plan based on my goal." }],
+      },
+      {
+        role: "model",
+        parts: [{text: `I can help you create a workout plan, but I need more information to make it effective and safe for you. Please tell me:
 
-  const result = await model.generateContent(prompt);
+        **1. Your Current Fitness Level:**
+        
+        * Are you a beginner, intermediate, or advanced lifter?
+        * What is your current training experience? (e.g., gym experience, specific exercises you know, etc.)
+        * How many days a week can you dedicate to training?
+        
+        **2. Your Bodybuilding Goals:**
+        
+        * What specific areas`}]
+      }
+    ],
+    generationConfig: {
+      maxOutputTokens: 100,
+    },
+  });
+
+  const msg = "I am a beginner lifter with some gym experience. I can dedicate 5 days a week to training. I would like to have a physique like a superhero in a movie.";
+
+  const result = await chat.sendMessage(msg);
   const response = await result.response;
   const text = response.text();
   console.log(text);
