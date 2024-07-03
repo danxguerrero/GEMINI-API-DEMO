@@ -40,16 +40,16 @@ async function run() {
       }
     ],
     generationConfig: {
-      maxOutputTokens: 100,
+      maxOutputTokens: 1000,
     },
   });
 
-  const msg = "I am a beginner lifter with some gym experience. I can dedicate 5 days a week to training. I would like to have a physique like a superhero in a movie.";
+  const msg = "I am a beginner lifter with some gym experience. I can dedicate 5 days a week to training. I would like to have a physique like a superhero in a movie. Your response should be in JSON format with days as keys and an array of objects for the value. Each value in the array should be a workout-name, number of sets and number of sets keys along with their corresponding values.";
 
   const result = await chat.sendMessage(msg);
   const response = await result.response;
   const text = response.text();
-  console.log(text);
+  console.log(response, text);
 }
 
 run();
